@@ -2,6 +2,8 @@
 
 http://localhost:3000
 
+npm install express express-handlebars sequelize sqlite3 body-parser multer express-validator bycryptjs uuid
+
 For production, set a strong JWT_SECRET.
 
 Demo users
