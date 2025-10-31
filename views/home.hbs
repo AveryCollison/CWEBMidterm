@@ -1,0 +1,39 @@
+<section class="home-hero">
+  <h2 class="home-title">{{upper title}}</h2>
+  <p class="home-desc">
+    Book tutoring sessions by subject and time. Tutors publish availability; the system enforces one student per slot.
+  </p>
+
+  {{!-- Project Objective card (with CTA) --}}
+  <div class="card" style="margin-top:12px;">
+    <h3>Objective</h3>
+    <p>
+      Provide a simple way for students to book tutoring sessions by subject and time,
+      while tutors manage their availability and the system prevents double-booking.
+    </p>
+
+  </div>
+
+  {{!-- Tech Highlights card (no CTA here) --}}
+  <div class="card" style="margin-top:12px;">
+    <h3>Tech Highlights</h3>
+    <ul class="tech">
+    <li>"My Sessions" area for students to see their booked tutoring sessions.</li>
+    <li>"Tutor" area for tutors to publish and manage their availability slots.</li>
+    <li>"Admin" area for administrators to review sessions and do light oversight.</li>
+    <li>JWT authentication (cookie or Bearer) with role-based access (student / tutor / admin).</li>
+  </ul>
+  </div>
+
+  {{!-- Quick Links card (keep) --}}
+  <div class="card" style="margin-top:12px;">
+    <h3>Quick Links</h3>
+    <p style="display:flex;gap:8px;flex-wrap:wrap;">
+      <a class="badge ok" href="/auth/login">Login</a>
+      <a class="badge" href="/my/sessions">My Sessions</a>
+      <a class="badge" href="/tutor/slots">Tutor</a>
+      <a class="badge" href="/admin/overview">Admin</a>
+      <a class="badge" href="/availability">Available Slots</a>
+    </p>
+  </div>
+</section>

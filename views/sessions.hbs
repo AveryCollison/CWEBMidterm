@@ -1,0 +1,30 @@
+<h2>My Booked Sessions</h2>
+
+{{#if sessions.length}}
+  <table>
+    <thead>
+      <tr>
+        <th>Tutor</th>
+        <th>Subject</th>
+        <th>Date</th>
+        <th>Start</th>
+        <th>End</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each sessions}}
+        <tr>
+          <td>{{tutorName}}</td>
+          <td>{{subject}}</td>
+          <td>{{date}}</td>
+          <td>{{start}}</td>
+          <td>{{end}}</td>
+          <td>{{status}}</td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+{{else}}
+  <p>You have no booked sessions yet.</p>
+{{/if}}

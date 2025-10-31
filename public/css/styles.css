@@ -1,0 +1,117 @@
+/* Tutoring Scheduler — Base Styles */
+
+:root {
+  /* Page background and default text color */
+  --bg: #0f172a;
+  --text: #1f2937;     /* dark gray text for good readability on light bg */
+
+  /* Panels/cards/inputs background (can be dark or light) */
+  --panel: #0b1220;    /* dark panel used in the "Quick Links" card */
+
+  /* Secondary text color, link/accent color */
+  --muted: #6b7280;
+  --accent: #2563eb;
+}
+
+/* ---------- Global resets ---------- */
+* { box-sizing: border-box; }
+a { color: var(--accent); text-decoration: none; }
+html, body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+}
+
+/* ---------- Layout shell ---------- */
+.container { max-width: 980px; margin: 0 auto; padding: 0 16px; }
+
+/* ---------- Header / Navbar ---------- */
+.site-header { background: #0b1220; border-bottom: 1px solid #16223a; }
+.brand { margin: 0; font-size: 28px; color: #e5e7eb; }
+.site-header .container { display: flex; align-items: center; gap: 24px; padding: 16px 16px; }
+nav a { margin-right: 12px; color: #c9d3e7; }
+nav a:hover { text-decoration: underline; }
+
+/* ---------- Badges / Buttons ---------- */
+.badge {
+  display: inline-block;
+  padding: 6px 10px;
+  border: 1px solid #1e293b;
+  border-radius: 6px;
+  color: #e5e7eb;
+}
+.badge.ok {
+  background: #0ea5e9;
+  color: #00111c;
+  border-color: #0ea5e9;
+}
+
+/* ---------- Main content ---------- */
+main.container { padding: 24px 16px; }
+
+/* Card panels (the Quick Links box, etc.) */
+.card {
+  border: 1px solid #1e293b;
+  border-radius: 10px;
+  background: var(--panel);
+  padding: 16px;
+  color: #e5e7eb; 
+}
+
+/* Forms */
+input, select {
+  width: 100%;
+  padding: 10px;
+  background: var(--panel);
+  color: #e5e7eb;
+  border: 1px solid #1e293b;
+  border-radius: 8px;
+}
+label { color: var(--muted); display: block; margin: 6px 0; }
+
+/* Buttons */
+button { cursor: pointer; }
+
+/* Error text */
+.error { color: #fca5a5; }
+
+/* Code / preformatted boxes */
+pre, .code-box {
+  white-space: pre-wrap;
+  word-break: break-all;
+  background: #0b1220;
+  color: #e5e7eb;
+  border: 1px solid #1e293b;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+/* ---------- Footer ---------- */
+.site-footer {
+  border-top: 1px solid #16223a;
+  padding: 16px;
+  text-align: center;
+  color: var(--muted);
+}
+
+/* ---------- Home Page ---------- */
+
+.home-hero .home-title,
+.home-hero .home-desc {
+  color: #e5e7eb !important;  
+}
+
+.home-hero .home-title {
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+/* spacing + titles inside cards */
+.home-hero { margin-bottom: 12px; }
+.card h3 { margin: 0 0 8px; font-weight: 700; }
+.card p  { margin: 0; }
+
+/* prettier bullets for Tech Highlights */
+ul.tech { margin: 0 0 0 18px; line-height: 1.6; }
+ul.tech li::marker { content: "✓  "; color: #22c55e; font-weight: 700; }

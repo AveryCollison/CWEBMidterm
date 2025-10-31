@@ -1,0 +1,10 @@
+added app.post(tutor/slots)
+added in-memory mock data
+added /tutor/slots/delete/:id
+changed app.get(tutor/slots)
+updated tutor-slots.hbs
+updated app.get(my/sessions)
+updated sessions.hbs
+added const tutorSlots and studentBookings
+added app.get(/availability)
+added app.get(/book/:slotId)

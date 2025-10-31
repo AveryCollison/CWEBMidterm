@@ -1,0 +1,33 @@
+<h2>{{title}}</h2>
+
+{{#if error}}
+<div class="alert alert-danger">{{error}}</div>
+{{/if}}
+
+<form method="POST" action="/tutor/slots">
+  <label>Subject:</label>
+  <input name="subject" required>
+  <label>Date:</label>
+  <input type="date" name="date" required>
+  <label>Start:</label>
+  <input type="time" name="start" required>
+  <label>End:</label>
+  <input type="time" name="end" required>
+  <button type="submit">Add Slot</button>
+</form>
+
+<hr>
+
+<h3>My Slots</h3>
+<ul>
+  {{#each slots}}
+    <li>
+      {{subject}} — {{date}} ({{start}}–{{end}})
+      <form method="POST" action="/tutor/slots/delete/{{id}}" style="display:inline">
+        <button type="submit">Delete</button>
+      </form>
+    </li>
+  {{else}}
+    <li>No slots yet.</li>
+  {{/each}}
+</ul>
