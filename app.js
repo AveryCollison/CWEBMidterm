@@ -10,12 +10,11 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { body, validationResult } from "express-validator";
 import { Sequelize, DataTypes } from "sequelize";
-import { Console } from "console";
 
 // initialize database
 const sequelize = new Sequelize({
   dialect: "sqlite",
-  storage: "C:\\Users\\Eu\\Pictures\\cweb-project\\CWEBMidterm\\scheduler.db",
+  storage: "C:\\Users\\avery\\OneDrive - Saskatchewan Polytechnic\\Year2CST\\CWEB280\\Midterm\\Tutoring Scheduler Web App\\scheduler.db",
   logging: false,
 });
 
@@ -45,24 +44,18 @@ const ROLES = Object.freeze({
 
 // --- Models ---
 const User = sequelize.define("User", {
-  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  id: { type: DataTypes.STRING, primaryKey: true },
   name: DataTypes.STRING,
   email: DataTypes.STRING,
   role: DataTypes.STRING,
   passwordHash: DataTypes.STRING,
 });
 
-const Subject = sequelize.define("Subject", {
-  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  code: DataTypes.STRING,
-  name: DataTypes.STRING,
-});
-
 const TutorSlot = sequelize.define("TutorSlot", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   tutorId: DataTypes.STRING,
   tutorName: DataTypes.STRING,
-  subjectId: DataTypes.STRING,
+  subject: DataTypes.STRING,
   date: DataTypes.STRING,
   start: DataTypes.STRING,
   end: DataTypes.STRING,
@@ -75,7 +68,7 @@ const Booking = sequelize.define("Booking", {
   studentName: DataTypes.STRING,
   tutorSlotId: DataTypes.INTEGER,
   tutorName: DataTypes.STRING,
-  subjectId: DataTypes.STRING,
+  subject: DataTypes.STRING,
   date: DataTypes.STRING,
   start: DataTypes.STRING,
   end: DataTypes.STRING,
@@ -91,29 +84,26 @@ Booking.belongsTo(User, { foreignKey: "studentId" });
 TutorSlot.hasOne(Booking, { foreignKey: "tutorSlotId" });
 Booking.belongsTo(TutorSlot, { foreignKey: "tutorSlotId" });
 
-
-Subject.hasMany(TutorSlot, { foreignKey: "subjectId" });
-TutorSlot.belongsTo(Subject, { foreignKey: "subjectId" });
 await sequelize.sync({ force: true }); // use { alter: true } after first run
 
 // --- Seed users (demo only; passwords are hashed) ---
 const users = [
   {
-    id: 1,
+    id: "stu1",
     name: "Student One",
     email: "student@example.com",
     role: ROLES.STUDENT,
     passwordHash: bcrypt.hashSync("student123", 10),
   },
   {
-    id: 2,
+    id: "tut1",
     name: "Tutor One",
     email: "tutor@example.com",
     role: ROLES.TUTOR,
     passwordHash: bcrypt.hashSync("tutor123", 10),
   },
   {
-    id: 3,
+    id: "adm1",
     name: "Admin User",
     email: "admin@example.com",
     role: ROLES.ADMIN,
@@ -293,8 +283,7 @@ app.get("/my/sessions", requireAuth, requireRole(ROLES.STUDENT), async (req, res
 
 app.get("/tutor/slots", requireAuth, requireRole(ROLES.TUTOR), async (req, res) => {
   const slots = await TutorSlot.findAll({ where: { tutorId: req.user.sub } });
-  const subjects = await Subject.findAll();
-  res.render("tutor-slots", { title: "Tutor Slots", slots : slots.map(slt => slt.get({ plain: true })) , subjects: subjects.map(sj => sj.get({ plain: true })) });
+  res.render("tutor-slots", { title: "Tutor Slots", slots });
 });
 
 // --- Tutor: CRUD for slots ---
@@ -372,98 +361,11 @@ app.post("/book/:slotId", requireAuth, requireRole(ROLES.STUDENT), async (req, r
   res.redirect("/my/sessions");
 });
 
-app.get("/admin/overview", requireAuth, requireRole(ROLES.ADMIN), async (req, res) => {
-  const users = await User.findAll();
-  const sessions = await Booking.findAll();
-  const subjects = await Subject.findAll();
+app.get("/admin/overview", requireAuth, requireRole(ROLES.ADMIN), (req, res) => {
   res.render("admin-overview", {
     title: "Admin Overview",
     metrics: { total: 0, upcomingWeek: 0, topSubjects: [] }, // Person 4 later
-    users: users.map(u => u.get({ plain: true })) ,
-    sessions: sessions.map(ss => ss.get({ plain: true })) ,
-    subjects: subjects.map(sj => sj.get({ plain: true })) 
   });
-});
-
-// Display user creation page
-app.get("/admin/create-user", requireAuth, requireRole(ROLES.ADMIN), async (req, res) => {
-  res.render("create-user", {
-    title: "Admin Overview",
-    metrics: { total: 0, upcomingWeek: 0, topSubjects: [] }, // Person 4 later
-  });
-});
-
-// Create user (form submission)
-app.post("/admin/create-user", requireAuth, requireRole(ROLES.ADMIN), async (req, res) => {
-  const { name, email, role, password } = req.body;
-  if (!name || !email || !role || !password) {
-    return res.status(400).render("create-user", {
-      title: "Create New User",
-      error: "All fields are required.",
-      
-    });
-    console.log("Cannot create user!"); 
-  }
-
-  await User.create({
-    name,
-    email,
-    role,
-    passwordHash: bcrypt.hashSync(password, 10),
-  });
-  console.log("User created successfully!"); 
-  res.redirect("/admin/overview");
-});
-
-app.post("/admin/users/delete/:id", requireAuth, requireRole(ROLES.TUTOR), async (req, res) => {
-  const user = await User.findOne({ where: { id: req.params.id} });
-  if (!user) {
-    return res.status(403).render("error", {
-      title: "Forbidden",
-      message: "You can only delete your own slots.",
-    });
-  }
-  await slot.destroy();
-  res.redirect("/admin/overview");
-});
-
-// Display subject creation page
-app.get("/admin/create-subject", requireAuth, requireRole(ROLES.ADMIN), async (req, res) => {
-  res.render("create-subjects", {
-    title: "Create New Subject",
-    metrics: { total: 0, upcomingWeek: 0, topSubjects: [] }, // Person 4 later
-  });
-});
-
-// Create Subject (form submission)
-app.post("/admin/create-subject", requireAuth, requireRole(ROLES.ADMIN), async (req, res) => {
-  const { name, code } = req.body;
-  if (!name || !code) {
-    return res.status(400).render("create-subjects", {
-      title: "Create New Subject",
-      error: "All fields are required.",
-      
-    });
-  }
-
-  await Subject.create({
-    name,
-    code
-  });
-
-  res.redirect("/admin/overview");
-});
-
-app.post("/tutor/subject/delete/:id", requireAuth, requireRole(ROLES.TUTOR), async (req, res) => {
-  const subject = await Subject.findOne({ where: { id: req.params.id } });
-  if (!subject) {
-    return res.status(403).render("error", {
-      title: "Forbidden",
-      message: "You can only delete your own slots.",
-    });
-  }
-  await subject.destroy();
-  res.redirect("/admin/overview");
 });
 
 // --- Friendly 404/500 ---
@@ -487,7 +389,8 @@ app.use((err, req, res, next) => {
   for (const u of users) await User.create(u);
 
   app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
+    console.log(`✅ Server running at http://localhost:${PORT}`);
+    console.log("🔐 Set a strong JWT_SECRET in production.");
   });
 })();
 
