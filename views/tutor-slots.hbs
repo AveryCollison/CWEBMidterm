@@ -6,7 +6,16 @@
 
 <form method="POST" action="/tutor/slots">
   <label>Subject:</label>
-  <input name="subject" required>
+  <select name="subject" id="subject" >
+    <option value="" selected>-- select a role --</option>
+    {{#each subjects}}
+    <option value="{{this.id}}" selected>{{this.name}}</option>
+       <tr>
+          <td>{{ this.name }}</td>
+          <td>{{ this.code }}</td>
+       </tr>
+       {{/each}}
+  </select>
   <label>Date:</label>
   <input type="date" name="date" required>
   <label>Start:</label>

@@ -9,18 +9,18 @@
 <body>
   <header class="site-header">
     <div class="container">
-      <h1 class="brand">Tutoring Scheduler</h1>
+      <h1 class="brand">TUTORING SCHEDULER</h1>
       <nav>
-        <a href="/">Home</a>
-        <a href="/my/sessions">My Sessions</a>
-        <a href="/tutor/slots">Tutor</a>
-        <a href="/admin/overview">Admin</a>
-        <a href="/availability">Available Slots</a>
+        <a href="/">HOME</a>
+        <a href="/my/sessions">MY SESSIONS</a>
+        <a href="/tutor/slots">TUTOR</a>
+        <a href="/admin/overview">ADMIN</a>
+        <a href="/availability">AVAILABLE SLOTS</a>
         {{#if user}}
           <span class="badge">Hi, {{user.name}} ({{user.role}})</span>
-          <a class="badge" href="/auth/logout">Logout</a>
+          <a class="badge" href="/auth/logout">LOGOUT</a>
         {{else}}
-          <a href="/auth/login">Login</a>
+          <a href="/auth/login">LOGIN</a>
         {{/if}}
       </nav>
     </div>

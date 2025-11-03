@@ -1,12 +1,32 @@
+.navbar {
+    background-color: #292e26;
+    color: white;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    padding: 15px;
+}
+
+
+.form-error-notification {
+    background-color: #f5d4d5;
+    color: red;
+    padding: 15px;
+    border: 1px solid;
+     border-radius: 0px;
+     width: 100%;
+     font-size: 14px;
+     margin-top: 5px;
+}
+
+
 /* Tutoring Scheduler — Base Styles */
 
 :root {
   /* Page background and default text color */
-  --bg: #0f172a;
+  --bg: #ffffff;
   --text: #1f2937;     /* dark gray text for good readability on light bg */
 
   /* Panels/cards/inputs background (can be dark or light) */
-  --panel: #0b1220;    /* dark panel used in the "Quick Links" card */
+  --panel: #ffffff;    /* dark panel used in the "Quick Links" card */
 
   /* Secondary text color, link/accent color */
   --muted: #6b7280;
@@ -27,11 +47,15 @@ html, body {
 .container { max-width: 980px; margin: 0 auto; padding: 0 16px; }
 
 /* ---------- Header / Navbar ---------- */
-.site-header { background: #0b1220; border-bottom: 1px solid #16223a; }
-.brand { margin: 0; font-size: 28px; color: #e5e7eb; }
+.site-header {  background: #292e26; border-bottom: 1px solid #16223a; }
+.brand {width: 308px; margin: 0; font-size: 28px; color: #e5e7eb; border: 1px solid #d78408; font-weight: lighter; padding: 5px 8px 5px 12px;
+}
 .site-header .container { display: flex; align-items: center; gap: 24px; padding: 16px 16px; }
-nav a { margin-right: 12px; color: #c9d3e7; }
+nav a { margin-right: 13px; color: #e2f0e7; }
 nav a:hover { text-decoration: underline; }
+
+
+
 
 /* ---------- Badges / Buttons ---------- */
 .badge {
@@ -52,11 +76,11 @@ main.container { padding: 24px 16px; }
 
 /* Card panels (the Quick Links box, etc.) */
 .card {
-  border: 1px solid #1e293b;
+  border: 1px solid #ffffff;
   border-radius: 10px;
   background: var(--panel);
   padding: 16px;
-  color: #e5e7eb; 
+  color: #000000; 
 }
 
 /* Forms */
@@ -64,7 +88,7 @@ input, select {
   width: 100%;
   padding: 10px;
   background: var(--panel);
-  color: #e5e7eb;
+  color: #353636;
   border: 1px solid #1e293b;
   border-radius: 8px;
 }
@@ -99,11 +123,11 @@ pre, .code-box {
 
 .home-hero .home-title,
 .home-hero .home-desc {
-  color: #e5e7eb !important;  
+  color: #000000 !important;  
 }
 
 .home-hero .home-title {
-  font-weight: 800;
+  
   letter-spacing: 0.02em;
 }
 
@@ -114,4 +138,9 @@ pre, .code-box {
 
 /* prettier bullets for Tech Highlights */
 ul.tech { margin: 0 0 0 18px; line-height: 1.6; }
-ul.tech li::marker { content: "✓  "; color: #22c55e; font-weight: 700; }
+ul.tech li::marker { color: #000000; font-weight: 700; }
+
+
+.navbar-align-right-items{
+  margin-left: auto;
+}
