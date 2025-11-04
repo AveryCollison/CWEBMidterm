@@ -6,7 +6,7 @@ import cookieParser from "cookie-parser";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { engine as createHbs } from "express-handlebars";
-import path from "path";
+import path, { parse } from "path";
 import { fileURLToPath } from "url";
 import { body, validationResult } from "express-validator";
 import { Sequelize, DataTypes } from "sequelize";
@@ -15,7 +15,7 @@ import { Console } from "console";
 // initialize database
 const sequelize = new Sequelize({
   dialect: "sqlite",
-  storage: "C:\\Users\\Eu\\Pictures\\cweb-project\\CWEBMidterm\\scheduler.db",
+  storage: "C:/Users/avery/OneDrive/Documents/GitHub/CWEBMidterm/scheduler.db",
   logging: false,
 });
 
@@ -46,85 +46,54 @@ const ROLES = Object.freeze({
 // --- Models ---
 const User = sequelize.define("User", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  name: DataTypes.STRING,
-  email: DataTypes.STRING,
+  name: { type: DataTypes.STRING, allowNull: false, },
+  email: { type: DataTypes.STRING, allowNull: false, unique: true, },
   role: DataTypes.STRING,
-  passwordHash: DataTypes.STRING,
+  passwordHash: { type: DataTypes.STRING, allowNull: false,},
 });
 
 const Subject = sequelize.define("Subject", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  code: DataTypes.STRING,
+  code: { type: DataTypes.STRING, unique: true, },
   name: DataTypes.STRING,
 });
 
 const TutorSlot = sequelize.define("TutorSlot", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  tutorId: DataTypes.STRING,
-  tutorName: DataTypes.STRING,
-  subjectId: DataTypes.STRING,
-  date: DataTypes.STRING,
-  start: DataTypes.STRING,
-  end: DataTypes.STRING,
+  tutorId: { type: DataTypes.INTEGER, allowNull: false },
+  tutorName: { type: DataTypes.STRING, allowNull: false,},
+  subjectId: { type: DataTypes.INTEGER, allowNull: false },
+  date: { type: DataTypes.STRING, allowNull: false, },
+  start: { type: DataTypes.STRING, allowNull: false,},
+  end: { type: DataTypes.STRING, allowNull: false, },
   booked: { type: DataTypes.BOOLEAN, defaultValue: false },
 });
 
 const Booking = sequelize.define("Booking", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  studentId: DataTypes.STRING,
+  studentId: { type: DataTypes.INTEGER, allowNull: false, },
   studentName: DataTypes.STRING,
-  tutorSlotId: DataTypes.INTEGER,
-  tutorName: DataTypes.STRING,
-  subjectId: DataTypes.STRING,
-  date: DataTypes.STRING,
-  start: DataTypes.STRING,
-  end: DataTypes.STRING,
+  tutorSlotId: { type: DataTypes.INTEGER, allowNull: false, },
+  tutorName: DataTypes.STRING, 
+  subjectId: { type: DataTypes.STRING, allowNull: false, },
+  date: { type: DataTypes.STRING, allowNull: false, },
+  start: { type: DataTypes.STRING, allowNull: false, },
+  end: { type: DataTypes.STRING, allowNull: false, },
   status: { type: DataTypes.STRING, defaultValue: "booked" },
 });
 
-User.hasMany(TutorSlot, { foreignKey: "tutorId" });
-TutorSlot.belongsTo(User, { foreignKey: "tutorId" });
+// relationships
+User.hasMany(TutorSlot, { foreignKey: "tutorId", as : "slots" });
+TutorSlot.belongsTo(User, { foreignKey: "tutorId", as : "tutor" });
 
-User.hasMany(Booking, { foreignKey: "studentId" });
-Booking.belongsTo(User, { foreignKey: "studentId" });
+Subject.hasMany(TutorSlot, { foreignKey: "subjectId", as : "slots" });
+TutorSlot.belongsTo(Subject, { foreignKey: "subjectId", as : "subject" });
 
-TutorSlot.hasOne(Booking, { foreignKey: "tutorSlotId" });
-Booking.belongsTo(TutorSlot, { foreignKey: "tutorSlotId" });
+User.hasMany(Booking, { foreignKey: "studentId", as : "bookings" });
+Booking.belongsTo(User, { foreignKey: "studentId", as : "student" });
 
-
-Subject.hasMany(TutorSlot, { foreignKey: "subjectId" });
-TutorSlot.belongsTo(Subject, { foreignKey: "subjectId" });
-await sequelize.sync({ force: true }); // use { alter: true } after first run
-
-// --- Seed users (demo only; passwords are hashed) ---
-const users = [
-  {
-    id: 1,
-    name: "Student One",
-    email: "student@example.com",
-    role: ROLES.STUDENT,
-    passwordHash: bcrypt.hashSync("student123", 10),
-  },
-  {
-    id: 2,
-    name: "Tutor One",
-    email: "tutor@example.com",
-    role: ROLES.TUTOR,
-    passwordHash: bcrypt.hashSync("tutor123", 10),
-  },
-  {
-    id: 3,
-    name: "Admin User",
-    email: "admin@example.com",
-    role: ROLES.ADMIN,
-    passwordHash: bcrypt.hashSync("admin123", 10),
-  },
-];
-
-// --- Seed users ---
-for (const u of users) {
-  await User.create(u);
-}
+TutorSlot.hasOne(Booking, { foreignKey: "tutorSlotId", as : "booking" });
+Booking.belongsTo(TutorSlot, { foreignKey: "tutorSlotId", as : "slot" });
 
 // --- Handlebars setup + helpers ---
 app.engine(
@@ -243,8 +212,10 @@ app.post(
         token: null,
       });
     }
+
     const { email, password, useCookie } = req.body;
-    const user = users.find((u) => u.email.toLowerCase() === String(email).toLowerCase());
+
+    const user = await User.findOne({ where: { email: email.toLowerCase() } });
     if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
       return res.status(401).render("login", {
         title: "Login",
@@ -253,6 +224,7 @@ app.post(
         token: null,
       });
     }
+
     const accessToken = signAccessToken(user, 15 * 60);
     if (useCookie) {
       res.cookie(ACCESS_COOKIE, accessToken, {
@@ -263,7 +235,8 @@ app.post(
       });
       return res.redirect("/my/sessions");
     }
-    // Stateless: show token to use in curl/Postman
+
+    // Show JWT for Postman testing
     return res.status(200).render("login", {
       title: "Login",
       form: { email, password: "", useCookie: false },
@@ -279,30 +252,61 @@ app.get("/auth/logout", (req, res) => {
 
 // --- Protected placeholders (prove RBAC now; CRUD comes later) ---
 app.get("/my/sessions", requireAuth, requireRole(ROLES.STUDENT), async (req, res) => {
-  // Include the tutor slot for full session info
+  // Include the tutor slot and subject for full session info
   const bookings = await Booking.findAll({
     where: { studentId: req.user.sub },
+    include: [
+      {
+        model: TutorSlot,
+        as: "slot",
+        include: [{ model: Subject, as: "subject" }] // Include subject of the slot
+      }
+    ],
     order: [["date", "ASC"], ["start", "ASC"]],
   });
 
-  const sessions = bookings.map(b => b.get({ plain: true }));
+  const sessions = bookings.map(b => {
+    const plain = b.get({ plain: true });
+    // Pull subject name from the slot relation
+    plain.subjectName = plain.slot?.subject?.name || "Unknown";
+    return plain;
+  });
 
   res.render("sessions", { title: "My Sessions", sessions });
 });
 
 
 app.get("/tutor/slots", requireAuth, requireRole(ROLES.TUTOR), async (req, res) => {
-  const slots = await TutorSlot.findAll({ where: { tutorId: req.user.sub } });
+  // Fetch tutor slots and include the related Subject
+  const slots = await TutorSlot.findAll({
+    where: { tutorId: req.user.sub },
+    include: [{ model: Subject, as: "subject" }] // include Subject
+  });
+
+  // Convert to plain objects and add subjectName for template
+  const slotsPlain = slots.map(s => {
+    const plain = s.get({ plain: true });
+    plain.subjectName = plain.subject?.name || "Unknown";
+    return plain;
+  });
+
+  // Fetch all subjects for the dropdown
   const subjects = await Subject.findAll();
-  res.render("tutor-slots", { title: "Tutor Slots", slots : slots.map(slt => slt.get({ plain: true })) , subjects: subjects.map(sj => sj.get({ plain: true })) });
+
+  // Render template
+  res.render("tutor-slots", {
+    title: "Tutor Slots",
+    slots: slotsPlain,
+    subjects: subjects.map(sj => sj.get({ plain: true })),
+  });
 });
 
 // --- Tutor: CRUD for slots ---
 
 // Create slot (form submission)
 app.post("/tutor/slots", requireAuth, requireRole(ROLES.TUTOR), async (req, res) => {
-  const { subject, date, start, end } = req.body;
-  if (!subject || !date || !start || !end) {
+  const { subject: subjectId, date, start, end } = req.body;
+  if (!subjectId || !date || !start || !end) {
     const slots = await TutorSlot.findAll({ where: { tutorId: req.user.sub } });
     return res.status(400).render("tutor-slots", {
       title: "Tutor Slots",
@@ -314,7 +318,7 @@ app.post("/tutor/slots", requireAuth, requireRole(ROLES.TUTOR), async (req, res)
   await TutorSlot.create({
     tutorId: req.user.sub,
     tutorName: req.user.name,
-    subject,
+    subjectId: parseInt(subjectId),
     date,
     start,
     end,
@@ -340,30 +344,42 @@ app.post("/tutor/slots/delete/:id", requireAuth, requireRole(ROLES.TUTOR), async
 app.get("/availability", requireAuth, requireRole(ROLES.STUDENT), async (req, res) => {
   const openSlots = await TutorSlot.findAll({ 
     where: { booked: false },
+    include: [{ model: Subject, as: "subject" }], // include Subject
     order: [["date", "ASC"], ["start", "ASC"]]
   });
 
-  // Convert Sequelize instances to plain objects
-  const slots = openSlots.map(slot => slot.get({ plain: true }));
+  // Convert Sequelize instances to plain objects and add subjectName
+  const slots = openSlots.map(slot => {
+    const plain = slot.get({ plain: true });
+    plain.subjectName = plain.subject?.name || "Unknown";
+    return plain;
+  });
 
   res.render("availability", { title: "Available Slots", slots });
 });
 
 // --- Student: book a slot ---
 app.post("/book/:slotId", requireAuth, requireRole(ROLES.STUDENT), async (req, res) => {
-  const slot = await TutorSlot.findByPk(req.params.slotId);
-  if (!slot) return res.status(404).render("error", { title: "Not Found", message: "Slot not found." });
-  if (slot.booked) return res.status(400).render("error", { title: "Already Booked", message: "This slot is already booked." });
+  const slot = await TutorSlot.findByPk(req.params.slotId, {
+    include: [{ model: Subject, as: "subject" }],
+  });
+
+  if (!slot) 
+    return res.status(404).render("error", { title: "Not Found", message: "Slot not found." });
+
+  if (slot.booked) 
+    return res.status(400).render("error", { title: "Already Booked", message: "This slot is already booked." });
 
   await Booking.create({
     studentId: req.user.sub,
     studentName: req.user.name,
     tutorSlotId: slot.id,
     tutorName: slot.tutorName,
-    subject: slot.subject,
+    subjectId: slot.subjectId, // <-- save the subject ID
     date: slot.date,
     start: slot.start,
     end: slot.end,
+    status: "booked"
   });
 
   slot.booked = true;
@@ -442,7 +458,6 @@ app.post("/admin/create-subject", requireAuth, requireRole(ROLES.ADMIN), async (
     return res.status(400).render("create-subjects", {
       title: "Create New Subject",
       error: "All fields are required.",
-      
     });
   }
 
@@ -484,7 +499,18 @@ app.use((err, req, res, next) => {
 // --- Start server after syncing database and seeding users ---
 (async () => {
   await sequelize.sync({ force: true });
-  for (const u of users) await User.create(u);
+
+  // Seed only missing default users
+  const demoUsers = [
+    { name: "Student One", email: "student@example.com", role: ROLES.STUDENT, passwordHash: bcrypt.hashSync("student123", 10) },
+    { name: "Tutor One", email: "tutor@example.com", role: ROLES.TUTOR, passwordHash: bcrypt.hashSync("tutor123", 10) },
+    { name: "Admin User", email: "admin@example.com", role: ROLES.ADMIN, passwordHash: bcrypt.hashSync("admin123", 10) },
+  ];
+
+  for (const u of demoUsers) {
+    const exists = await User.findOne({ where: { email: u.email } });
+    if (!exists) await User.create(u);
+  }
 
   app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);

@@ -2,7 +2,7 @@
 
 http://localhost:3000
 
-npm install express express-handlebars sequelize sqlite3 body-parser multer express-validator bycryptjs uuid
+npm install express express-handlebars sequelize sqlite3 body-parser multer express-validator bcryptjs uuid helmet cookie-parser jsonwebtoken
 
 For production, set a strong JWT_SECRET.
 
