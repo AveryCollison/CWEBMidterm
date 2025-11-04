@@ -498,7 +498,7 @@ app.use((err, req, res, next) => {
 
 // --- Start server after syncing database and seeding users ---
 (async () => {
-  await sequelize.sync({ force: true });
+  await sequelize.sync({ alter: true });
 
   // Seed only missing default users
   const demoUsers = [
