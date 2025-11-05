@@ -1,0 +1,34 @@
+<h2>Available Tutor Slots</h2>
+
+{{#if slots.length}}
+  <table>
+    <thead>
+      <tr>
+        <th>Tutor</th>
+        <th>Subject</th>
+        <th>Date</th>
+        <th>Start</th>
+        <th>End</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each slots}}
+        <tr>
+          <td>{{tutorName}}</td>
+          <td>{{subjectName}}</td>
+          <td>{{date}}</td>
+          <td>{{start}}</td>
+          <td>{{end}}</td>
+          <td>
+            <form action="/book/{{id}}" method="POST">
+              <button type="submit">Book</button>
+            </form>
+          </td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+{{else}}
+  <p>No available slots right now.</p>
+{{/if}}

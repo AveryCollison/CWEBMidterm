@@ -1,0 +1,34 @@
+{{!-- Login (supports cookie session or Bearer token) --}}
+<section>
+  <h2>Login</h2>
+
+  {{#if error}}
+    <div class="card"><strong>Error:</strong> <span class="error">{{error}}</span></div>
+  {{/if}}
+
+  <form action="/auth/login" method="post" class="card" novalidate>
+    <label for="email"><strong>Email</strong></label>
+    <input id="email" name="email" type="email" value="{{form.email}}" required />
+
+    <label for="password" style="margin-top:8px;"><strong>Password</strong></label>
+    <input id="password" name="password" type="password" value="{{form.password}}" required />
+
+    <label style="display:flex;align-items:center;gap:8px;margin-top:8px;">
+      <input type="checkbox" name="useCookie" {{#if form.useCookie}}checked{{/if}} />
+      <span>Use cookie session (httpOnly)</span>
+    </label>
+
+    <button type="submit" class="badge ok" style="margin-top:12px;">Sign In</button>
+  </form>
+
+  {{#if token}}
+    <div class="card" style="margin-top:12px;">
+      <p><strong>Your access token (stateless/Bearer):</strong></p>
+      <p style="word-break:break-all;"><code>{{token}}</code></p>
+      <p style="margin-top:8px;">
+        Example with curl:<br />
+        <code>curl -H "Authorization: Bearer {{token}}" http://localhost:3000/my/sessions</code>
+      </p>
+    </div>
+  {{/if}}
+</section>
