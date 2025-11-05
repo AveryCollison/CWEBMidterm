@@ -1,13 +1,12 @@
 <section>
   <h2>Admin Overview</h2>
   <div class="card">
-    <p>Simple analytics will appear here (total sessions, upcoming week, top subjects).</p>
 
-    <a href="/admin/create-user">Create new user</a>
-    <a href="/admin/create-subject">Create new subject</a>
+    <a class="create-button" href="/admin/create-user">+ Create new user</a>
+    <a class="create-button" href="/admin/create-subject">+ Create new subject</a>
 
     <h2>Users</h2>
-    <table>
+    <table class="table-style">
       <thead>
        <tr>
           <th>Name</th>
@@ -28,7 +27,7 @@
 
     <h2>Sessions</h2>
     {{#if sessions.length}}
-  <table>
+  <table class="table-style">
     <thead>
       <tr>
         <th>Tutor</th>
@@ -58,17 +57,20 @@
 
 
   <h2>Subjects</h2>
-    <table>
-    
+    <table class="table-style">
+      <thead>
        <tr>
           <th>Name</th>
           <th>Code</th>
        </tr>
+       </thead>
+       <tbody>
        {{#each subjects}}
        <tr>
           <td>{{ this.name }}</td>
           <td>{{ this.code }}</td>
        </tr>
        {{/each}}
+       </tbody>
     </table>
 </section>

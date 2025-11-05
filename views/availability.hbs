@@ -1,7 +1,7 @@
 <h2>Available Tutor Slots</h2>
 
 {{#if slots.length}}
-  <table>
+  <table class="table-style">
     <thead>
       <tr>
         <th>Tutor</th>
@@ -22,7 +22,7 @@
           <td>{{end}}</td>
           <td>
             <form action="/book/{{id}}" method="POST">
-              <button type="submit">Book</button>
+              <button class="book-button" type="submit">Book</button>
             </form>
           </td>
         </tr>

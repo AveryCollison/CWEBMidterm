@@ -144,3 +144,77 @@ ul.tech li::marker { color: #000000; font-weight: 700; }
 .navbar-align-right-items{
   margin-left: auto;
 }
+
+.create-button {
+  padding: 10px;
+  border: #222222 solid 1px;
+  margin-right: 15px;
+}
+
+.form-button{
+  background-color: #292e26;
+  color: #ffffff;
+  padding: 10px;
+  border: #292e26 1px solid;
+  margin-top: 10px;
+  width: 100px;
+}
+
+.delete-button {
+  background-color: #a0a0a0;
+  color: #ffffff;
+  padding: 10px;
+  border: #a0a0a0 1px solid;
+  margin-top: 10px;
+  width: 100px;
+}
+
+.book-button {
+  background-color: #d78408;
+  color: #ffffff;
+  padding: 10px;
+  border: #d78408 1px solid;
+  margin-top: 10px;
+  width: 100px;
+}
+
+.table-style {
+   border-collapse: collapse;
+   margin: 25px 0;
+   min-width: 500px;
+}
+
+.table-style thead tr {
+   background: #222222;
+   color: #ffffff;
+   text-align: left;
+}
+
+.table-style th,
+.table-style td {
+    padding: 12px 15px;
+}
+
+
+
+.table-style tbody tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+.table-style tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+
+.table-style tbody tr:last-of-type {
+    border-bottom: 2px solid #009879;
+}
+
+.table-style tbody tr.active-row {
+    font-weight: bold;
+    color: #009879;
+}
+
+
+
+
+

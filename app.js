@@ -15,7 +15,7 @@ import { Console } from "console";
 // initialize database
 const sequelize = new Sequelize({
   dialect: "sqlite",
-  storage: "C:/Users/avery/OneDrive/Documents/GitHub/CWEBMidterm/scheduler.db",
+  storage: "C:/Users/Eu/Pictures/cweb-project/CWEBMidterm/scheduler.db",
   logging: false,
 });
 
